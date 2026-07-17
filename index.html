@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>إجازة سماع كتاب</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400&family=Reem+Kufi:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root{
+    --parchment:#f6ecd2;
+    --parchment-2:#eeddb0;
+    --ink:#2b2013;
+    --ink-soft:#4a3c26;
+    --green:#0e4a38;
+    --green-dark:#082e22;
+    --gold:#b8862f;
+    --gold-light:#d9ac4f;
+    --gold-pale:#f0d99a;
+    --maroon:#7a2323;
+  }
+
+  *{box-sizing:border-box;}
+
+  html,body{
+    margin:0;
+    padding:0;
+    background:#1c2621;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(184,134,47,0.06), transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(184,134,47,0.06), transparent 40%);
+    min-height:100vh;
+    font-family:'Amiri', serif;
+    color:var(--ink);
+  }
+
+  .wrap{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 16px;
+  }
+
+  /* ---------------- FORM SCREEN ---------------- */
+  .form-card{
+    width:100%;
+    max-width:460px;
+    background:var(--parchment);
+    border:1px solid rgba(184,134,47,0.4);
+    border-radius:6px;
+    padding:38px 30px 32px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.45);
+    position:relative;
+  }
+  .form-card::before{
+    content:"";
+    position:absolute;
+    inset:8px;
+    border:1px solid rgba(184,134,47,0.55);
+    border-radius:3px;
+    pointer-events:none;
+  }
+  .form-eyebrow{
+    text-align:center;
+    font-family:'Reem Kufi', sans-serif;
+    letter-spacing:2px;
+    font-size:12px;
+    color:var(--gold);
+    margin-bottom:6px;
+  }
+  .form-title{
+    text-align:center;
+    font-family:'Aref Ruqaa', serif;
+    font-weight:700;
+    font-size:34px;
+    color:var(--green);
+    margin:0 0 4px;
+  }
+  .form-sub{
+    text-align:center;
+    font-size:15px;
+    color:var(--ink-soft);
+    margin:0 0 28px;
+    line-height:1.6;
+  }
+  .form-sub b{color:var(--ink);}
+  label{
+    display:block;
+    font-family:'Reem Kufi', sans-serif;
+    font-size:13.5px;
+    color:var(--ink-soft);
+    margin-bottom:8px;
+  }
+  input[type="text"]{
+    width:100%;
+    padding:12px 14px;
+    font-family:'Amiri', serif;
+    font-size:18px;
+    background:#fffdf6;
+    border:1px solid #cbb884;
+    border-radius:4px;
+    color:var(--ink);
+    margin-bottom:22px;
+    outline:none;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  input[type="text"]:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(184,134,47,0.18);
+  }
+  select{
+    width:100%;
+    padding:11px 14px;
+    font-family:'Reem Kufi', sans-serif;
+    font-size:14.5px;
+    background:#fffdf6;
+    border:1px solid #cbb884;
+    border-radius:4px;
+    color:var(--ink);
+    margin-bottom:22px;
+    outline:none;
+    cursor:pointer;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  select:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(184,134,47,0.18);
+  }
+  .gender-row{
+    display:flex;
+    gap:10px;
+    margin-bottom:8px;
+  }
+  .gender-opt{
+    flex:1;
+    position:relative;
+  }
+  .gender-opt input{
+    position:absolute;
+    opacity:0;
+    inset:0;
+    cursor:pointer;
+    margin:0;
+  }
+  .gender-opt span{
+    display:block;
+    text-align:center;
+    padding:11px 8px;
+    border:1px solid #cbb884;
+    border-radius:4px;
+    font-size:15px;
+    color:var(--ink-soft);
+    background:#fffdf6;
+    transition:all .15s;
+  }
+  .gender-opt input:checked + span{
+    background:var(--green);
+    border-color:var(--green);
+    color:var(--gold-pale);
+  }
+  .error-msg{
+    font-size:13px;
+    color:var(--maroon);
+    margin:-14px 0 16px;
+    min-height:16px;
+  }
+  .checkbox-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-family:'Reem Kufi', sans-serif;
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-bottom:14px;
+    cursor:pointer;
+  }
+  .checkbox-row input{
+    width:16px;
+    height:16px;
+    accent-color:var(--green);
+    cursor:pointer;
+  }
+  #customDateWrap{margin-top:-6px;}
+  #customDateWrap input{font-size:15px;}
+  .attest-block{
+    margin-top:6px;
+    padding-top:14px;
+    border-top:1px dashed #cbb884;
+  }
+  .attest-block .checkbox-row span{
+    font-family:'Amiri', serif;
+    font-size:14.5px;
+    line-height:1.6;
+  }
+  .submit-btn{
+    width:100%;
+    margin-top:14px;
+    padding:14px;
+    background:var(--green);
+    color:var(--gold-pale);
+    border:1px solid var(--green-dark);
+    border-radius:4px;
+    font-family:'Aref Ruqaa', serif;
+    font-size:19px;
+    cursor:pointer;
+    transition:background .15s, transform .1s;
+    letter-spacing:1px;
+  }
+  .submit-btn:hover{background:var(--green-dark);}
+  .submit-btn:active{transform:scale(0.99);}
+
+  /* ---------------- CERTIFICATE SCREEN ---------------- */
+  #certScreen{display:none;}
+  .cert-outer{
+    width:100%;
+    max-width:297mm;
+  }
+  .toolbar{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+  }
+  .toolbar button{
+    padding:10px 20px;
+    border-radius:4px;
+    border:1px solid var(--gold);
+    background:transparent;
+    color:var(--gold-light);
+    font-family:'Reem Kufi', sans-serif;
+    font-size:13.5px;
+    cursor:pointer;
+    transition:all .15s;
+  }
+  .toolbar button:hover{background:rgba(184,134,47,0.15);}
+  .toolbar button.primary{
+    background:var(--gold);
+    color:#241a08;
+  }
+  .toolbar button.primary:hover{background:var(--gold-light);}
+
+  /* Each page is a fixed A4-landscape box. The frame/border/background always
+     fills the whole page (absolute-inset layers, not a %-height chain) so a
+     short certificate never leaves a blank gap; only the text inside is
+     auto-scaled to fit so it never spills onto a second page. */
+  .page-shell{
+    width:297mm;
+    max-width:100%;
+    aspect-ratio:297/210;
+    margin:0 auto 26px;
+    box-shadow:0 25px 70px rgba(0,0,0,0.5);
+    border-radius:2px;
+    overflow:hidden;
+    position:relative;
+  }
+  .page-scale{
+    position:absolute;
+    inset:0;
+  }
+
+  .certificate{
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(ellipse at top left, rgba(255,255,255,0.35), transparent 55%),
+      radial-gradient(ellipse at bottom right, rgba(0,0,0,0.06), transparent 55%),
+      var(--parchment);
+  }
+  .cert-frame{
+    position:absolute;
+    inset:30px;
+    border:2px solid var(--gold);
+    background:
+      repeating-linear-gradient(45deg, transparent 0 8px, rgba(184,134,47,0.10) 8px 9px, transparent 9px 18px);
+  }
+  .cert-frame-inner{
+    position:absolute;
+    inset:20px;
+    border:1.5px solid var(--green);
+    background:var(--parchment);
+  }
+  .cert-content{
+    position:absolute;
+    inset:0;
+    padding:30px 50px 26px;
+  }
+  .content-fit{
+    width:100%;
+    transform-origin:top center;
+  }
+  .content-fit.editing{
+    outline:1.5px dashed var(--maroon);
+    outline-offset:6px;
+    cursor:text;
+    border-radius:4px;
+  }
+  .content-fit.editing:focus{
+    outline-color:var(--green);
+  }
+
+  /* corner ornaments */
+  .corner{
+    position:absolute;
+    width:64px;
+    height:64px;
+    color:var(--gold);
+  }
+  .corner svg{width:100%;height:100%;display:block;}
+  .corner.tl{top:-2px;right:-2px;transform:scaleX(-1);}
+  .corner.tr{top:-2px;left:-2px;}
+  .corner.bl{bottom:-2px;right:-2px;transform:scale(-1,-1);}
+  .corner.br{bottom:-2px;left:-2px;transform:scaleY(-1);}
+
+  .cert-eyebrow{
+    text-align:center;
+    font-family:'Reem Kufi', sans-serif;
+    font-size:12px;
+    letter-spacing:4px;
+    color:var(--gold);
+    margin-bottom:2px;
+  }
+  .bismillah{
+    text-align:center;
+    font-family:'Aref Ruqaa', serif;
+    font-size:20px;
+    color:var(--green);
+    margin:2px 0 6px;
+  }
+  .cert-title{
+    text-align:center;
+    font-family:'Aref Ruqaa', serif;
+    font-weight:700;
+    font-size:46px;
+    color:var(--green);
+    margin:0 0 4px;
+    text-shadow:0 1px 0 rgba(255,255,255,0.5);
+  }
+  .cert-title-sub{
+    text-align:center;
+    font-family:'Amiri', serif;
+    font-style:italic;
+    font-size:15px;
+    color:var(--ink-soft);
+    margin-bottom:18px;
+  }
+  .divider{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin:0 auto 26px;
+    width:70%;
+  }
+  .divider .line{flex:1;height:1px;background:linear-gradient(90deg, transparent, var(--gold), transparent);}
+  .divider .star{color:var(--gold);font-size:16px;}
+
+  .cert-body{
+    flex:1;
+    font-size:15.5px;
+    line-height:1.85;
+    color:var(--ink);
+    text-align:justify;
+    text-align-last:right;
+  }
+  .cert-body p{margin:0 0 13px;}
+  .cert-body .opening{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    text-align:center;
+    text-align-last:center;
+    margin-bottom:24px;
+  }
+  .cert-body .inline-name{
+    font-family:'Aref Ruqaa', serif;
+    font-size:1.35em;
+    color:var(--maroon);
+    font-weight:700;
+    padding:0 4px;
+  }
+  .cert-body .book-title{
+    color:var(--green);
+    font-weight:700;
+  }
+  .cert-body .closing-salat{
+    text-align:center;
+    text-align-last:center;
+    margin-top:8px;
+    color:var(--ink-soft);
+    font-size:15.5px;
+  }
+
+  /* ---------------- APPENDIX PAGES ---------------- */
+  .appendix-page{
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(ellipse at top left, rgba(255,255,255,0.35), transparent 55%),
+      radial-gradient(ellipse at bottom right, rgba(0,0,0,0.06), transparent 55%),
+      var(--parchment);
+  }
+  .appendix-frame{
+    position:absolute;
+    inset:30px;
+    border:2px solid var(--gold);
+  }
+  .appendix-inner{
+    position:absolute;
+    inset:16px;
+    border:1.5px solid var(--green);
+    background:var(--parchment);
+  }
+  .appendix-content{
+    position:absolute;
+    inset:0;
+    padding:30px 42px;
+  }
+  .appendix-title{
+    text-align:center;
+    font-family:'Aref Ruqaa', serif;
+    font-weight:700;
+    font-size:28px;
+    color:var(--green);
+    margin:0 0 4px;
+  }
+  .appendix-subtitle{
+    text-align:center;
+    font-family:'Amiri', serif;
+    font-style:italic;
+    font-size:14px;
+    color:var(--ink-soft);
+    margin-bottom:20px;
+  }
+  .appendix-body{
+    font-size:13.5px;
+    line-height:1.7;
+    text-align:justify;
+    text-align-last:right;
+    color:var(--ink);
+  }
+  .appendix-body p{margin:0 0 11px;}
+  .appendix-body p.chain-item{
+    padding-right:18px;
+    border-right:2px solid var(--gold-light);
+  }
+  .appendix-footer{
+    text-align:center;
+    font-family:'Reem Kufi', sans-serif;
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-top:18px;
+    letter-spacing:1px;
+  }
+
+  @media print{
+    .page-shell + .page-shell{page-break-before:always;}
+  }
+
+  .cert-footer{
+    margin-top:22px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:20px;
+  }
+  .cert-footer.single-item{
+    justify-content:center;
+  }
+  .footer-block{
+    flex:1;
+    text-align:center;
+  }
+  .footer-block .label{
+    font-family:'Reem Kufi', sans-serif;
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+  .footer-block .value{
+    font-family:'Amiri', serif;
+    font-size:16px;
+    color:var(--ink);
+  }
+  .signature{
+    font-family:'Aref Ruqaa', serif;
+    font-size:19px;
+    color:var(--green);
+    border-top:1px solid var(--gold);
+    padding-top:6px;
+    margin-top:22px;
+    display:inline-block;
+    white-space:nowrap;
+  }
+
+  .cert-serial{
+    position:absolute;
+    top:14px;
+    left:20px;
+    font-family:'Reem Kufi', sans-serif;
+    font-size:10px;
+    color:rgba(43,32,19,0.55);
+    letter-spacing:1px;
+  }
+
+  @media (max-width: 720px){
+    .cert-content{padding:24px 18px;}
+    .appendix-content{padding:24px 18px;}
+    .cert-footer{flex-direction:column;align-items:center;}
+  }
+
+  @media print{
+    body{background:#fff;}
+    .toolbar, .form-screen{display:none !important;}
+    .wrap{padding:0;min-height:auto;}
+    .page-shell{box-shadow:none; width:100%; height:190mm; margin-bottom:0;}
+    @page{size:A4 landscape;margin:10mm;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- LOCKED SCREEN (shown to a student if their link was already used) -->
+  <div class="form-card" id="lockedScreen" style="display:none;">
+    <div class="form-eyebrow">مركز الإجازات العلمية</div>
+    <div class="form-title">هَذَا الرَّابِطُ مُسْتَخْدَمٌ بِالْفِعْلِ</div>
+    <p class="form-sub">تم إصدار إجازة عبر هذا الرابط من قبل، ولا يمكن استخدامه مرة أخرى. إن كنت بحاجة إلى إجازة جديدة، يرجى التواصل مع مُصدر الإجازة للحصول على رابط جديد.</p>
+  </div>
+
+  <!-- ADMIN LINK GENERATOR (visible only when NOT opened via a student link) -->
+  <div class="form-card" id="linkGenPanel" style="display:none; margin-bottom:16px;">
+    <div class="form-eyebrow">لوحة المُصدر</div>
+    <div class="form-title" style="font-size:24px;">إنشاء رابط مقيّد لطالب</div>
+    <p class="form-sub">وَلِّد رابطاً خاصاً بطالب واحد. عند فتحه يظهر نموذج مبسّط (الاسم والجنس والإقرار فقط) بدون أي إعدادات إدارية، ويمكن استخدامه مرة واحدة فقط.</p>
+    <button class="submit-btn" onclick="generateStudentLink()" type="button">توليد رابط جديد</button>
+    <div id="linkOutputWrap" style="display:none; margin-top:16px;">
+      <label for="linkOutput">الرابط المقيّد (انسخه وأرسله للطالب)</label>
+      <input type="text" id="linkOutput" readonly onclick="this.select()">
+      <button class="submit-btn" onclick="copyStudentLink()" type="button" style="margin-top:8px; background:var(--gold); color:#241a08;">نسخ الرابط</button>
+      <div class="error-msg" id="copyMsg" style="color:var(--green); text-align:center;"></div>
+    </div>
+  </div>
+
+  <!-- FORM SCREEN -->
+  <div class="form-card" id="formScreen">
+    <div class="form-eyebrow">مركز الإجازات العلمية</div>
+    <div class="form-title">إصدار إجازة سماع</div>
+    <p class="form-sub">أدخل بياناتك ليتم إصدار <b>إجازة سماع كتاب إتمام المطالب</b> باسمك، منسّقة ومختومة، جاهزة للطباعة والتحميل.</p>
+
+    <label for="studentName">الاسم الكامل</label>
+    <input type="text" id="studentName" placeholder="اكتب اسمك هنا" autocomplete="off">
+    <div class="error-msg" id="nameError"></div>
+
+    <label>الجنس</label>
+    <div class="gender-row">
+      <label class="gender-opt">
+        <input type="radio" name="gender" value="male" checked>
+        <span>ذكر</span>
+      </label>
+      <label class="gender-opt">
+        <input type="radio" name="gender" value="female">
+        <span>أنثى</span>
+      </label>
+    </div>
+
+    <div id="adminOnlyControls">
+      <label class="checkbox-row">
+        <input type="checkbox" id="showDateToggle" checked>
+        <span>إظهار تاريخ التحرير في الإجازة</span>
+      </label>
+
+      <div id="customDateWrap">
+        <label for="customDate">تاريخ التحرير (اختياري)</label>
+        <input type="text" id="customDate" placeholder="اتركه فارغاً لاستخدام تاريخ اليوم هجرياً">
+      </div>
+
+      <label class="checkbox-row">
+        <input type="checkbox" id="showSerialToggle" checked>
+        <span>إظهار رقم الإجازة</span>
+      </label>
+
+      <label for="fontFamilySelect">نوع الخط</label>
+      <select id="fontFamilySelect">
+        <option value="'Amiri', serif" selected>نسخي (Amiri)</option>
+        <option value="'Aref Ruqaa', serif">رقعة (Aref Ruqaa)</option>
+        <option value="'Reem Kufi', sans-serif">كوفي عصري (Reem Kufi)</option>
+      </select>
+
+      <label for="fontSizeSelect">حجم الخط</label>
+      <select id="fontSizeSelect">
+        <option value="small">صغير</option>
+        <option value="medium" selected>متوسط</option>
+        <option value="large">كبير</option>
+        <option value="xlarge">كبير جداً</option>
+      </select>
+    </div>
+
+    <div class="attest-block" id="attestBlock">
+      <label class="checkbox-row">
+        <input type="checkbox" id="attestCheckbox">
+        <span>أُقِرُّ بِأَنِّي قَدْ سَمِعْتُ كَامِلاً كِتَابَ إِتْمَامِ الْمَطَالِبِ، وَمَا فَاتَنِي مِنْ فَوْتٍ</span>
+      </label>
+      <div class="error-msg" id="attestError"></div>
+
+      <label>طريقة إتمام السماع</label>
+      <div class="gender-row">
+        <label class="gender-opt">
+          <input type="radio" name="completionMethod" value="attended">
+          <span>قرأته على المؤلف خلال السماع</span>
+        </label>
+        <label class="gender-opt">
+          <input type="radio" name="completionMethod" value="recording">
+          <span>أكملته من خلال الاستماع للتسجيل</span>
+        </label>
+      </div>
+      <div class="error-msg" id="methodError"></div>
+    </div>
+
+    <button class="submit-btn" onclick="generateCert()">إصدار الإجازة</button>
+  </div>
+
+  <!-- CERTIFICATE SCREEN -->
+  <div class="cert-outer" id="certScreen">
+    <div class="toolbar">
+      <button onclick="toggleEditMode()" id="editModeBtn">تحرير النص</button>
+      <button class="primary" onclick="downloadImage()">تحميل كل الصفحات كصور</button>
+      <button onclick="printCertificate()">طباعة / حفظ PDF</button>
+      <button onclick="resetForm()" id="resetFormBtn">إصدار إجازة أخرى</button>
+    </div>
+
+    <div class="page-shell" id="certShell">
+      <div class="page-scale" id="certScale">
+        <div class="certificate" id="certificateNode">
+          <div class="cert-frame">
+            <div class="cert-frame-inner">
+
+          <div class="cert-serial" id="serialNo"></div>
+
+          <!-- corner ornaments -->
+          <div class="corner tl">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 62V22C2 10.9543 10.9543 2 22 2H62" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M2 46V30C2 20.0589 10.0589 12 20 12H36" stroke="currentColor" stroke-width="1"/>
+              <circle cx="14" cy="14" r="4" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M2 2L14 14M14 14L2 26M14 14L26 2" stroke="currentColor" stroke-width="0.8"/>
+            </svg>
+          </div>
+          <div class="corner tr">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 62V22C2 10.9543 10.9543 2 22 2H62" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M2 46V30C2 20.0589 10.0589 12 20 12H36" stroke="currentColor" stroke-width="1"/>
+              <circle cx="14" cy="14" r="4" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M2 2L14 14M14 14L2 26M14 14L26 2" stroke="currentColor" stroke-width="0.8"/>
+            </svg>
+          </div>
+          <div class="corner bl">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 62V22C2 10.9543 10.9543 2 22 2H62" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M2 46V30C2 20.0589 10.0589 12 20 12H36" stroke="currentColor" stroke-width="1"/>
+              <circle cx="14" cy="14" r="4" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M2 2L14 14M14 14L2 26M14 14L26 2" stroke="currentColor" stroke-width="0.8"/>
+            </svg>
+          </div>
+          <div class="corner br">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 62V22C2 10.9543 10.9543 2 22 2H62" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M2 46V30C2 20.0589 10.0589 12 20 12H36" stroke="currentColor" stroke-width="1"/>
+              <circle cx="14" cy="14" r="4" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M2 2L14 14M14 14L2 26M14 14L26 2" stroke="currentColor" stroke-width="0.8"/>
+            </svg>
+          </div>
+
+          <div class="cert-content" id="certContent">
+            <div class="content-fit" id="certContentFit">
+
+          <div class="cert-eyebrow">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+          <div class="cert-title">إِجَازَةُ سَمَاعٍ</div>
+
+          <div class="divider"><span class="line"></span><span class="star">✦</span><span class="line"></span></div>
+
+          <div class="cert-body">
+            <p class="opening">الْحَمْدُ لِلَّهِ الَّذِي حَمَى حِمَى هَذِهِ الشَّرِيعَةِ الْغَرَّاءِ، بِأَئِمَّةٍ أَمْجَادٍ، قَيَّدُوا شَوَارِدَهَا وَجَمَعُوا أَوَابِدَهَا بِسَلَاسِلِ الْإِسْنَادِ، فَتَمَّتِ الْهِدَايَةُ بِاتِّصَالِ الرِّوَايَةِ، وَكَمُلَتِ الْعِنَايَةُ بِبُلُوغِ الْغَايَةِ مِنَ الدِّرَايَةِ، وَصَارَتِ الْأَسَانِيدُ الْمُتَّصِلَةُ كَالْأَنْوَارِ، يَرْوِيهَا الْأَكَابِرُ عَنِ الْأَكَابِرِ، فَأَضْحَى الْإِسْنَادُ مِنَ الدِّينِ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى عَبْدِهِ وَرَسُولِهِ الْأَمِينِ، وَعَلَى آلِهِ وَصَحْبِهِ وَخَاتَمِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، وَمَنْ تَبِعَهُمْ بِإِحْسَانٍ إِلَى يَوْمِ الدِّينِ.</p>
+
+            <p class="main-para" id="mainPara"></p>
+
+            <p class="wasiya-para" id="wasiyaPara"></p>
+
+            <p class="closing-salat">وَصَلَّى اللَّهُ وَسَلَّمَ عَلَى نَبِيِّنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ.</p>
+          </div>
+
+          <div class="cert-footer" id="certFooter">
+            <div class="footer-block" id="dateFooterBlock">
+              <div class="label">تَحْرِيرًا فِي</div>
+              <div class="value" id="issueDate"></div>
+            </div>
+            <div class="footer-block">
+              <div class="label">الْمُجِيز</div>
+              <div class="signature">كُلَيْبُ بْنُ أَحْمَدَ بْنِ ضَيْفِ اللَّهِ الزَّهْرَانِيّ</div>
+            </div>
+          </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- APPENDIX 1: زاد المستقنع -->
+    <div class="page-shell" id="appx1Shell">
+      <div class="page-scale" id="appx1Scale">
+    <div class="appendix-page">
+      <div class="appendix-frame">
+        <div class="appendix-inner">
+          <div class="appendix-content" id="appx1Content">
+            <div class="content-fit" id="appx1ContentFit">
+          <div class="appendix-title">الْمُلْحَقُ الْأَوَّلُ</div>
+          <div class="appendix-subtitle">سَنَدُ إِجَازَةِ كِتَابِ زَادَ الْمُسْتَقْنِعِ فِي اخْتِصَارِ الْمُقْنِعِ، لِلْعَلَامَةِ مُوسَى بْنِ أَحْمَدَ بْنِ سَالِمٍ شَرَفِ الدِّينِ أَبِي النَّجَا الْحَجَاوِيِّ الْمَقْدِسِيِّ ثُمَّ الصَّالِحِي مُفْتِي الْحَنَابِلَةِ بِدِمَشْقَ (٨٩٥ - ٩٦٨ هـ)</div>
+          <div class="appendix-body">
+            <p>وَأُخْبِرُهُ أَنِّي سَمِعْتُ زَادَ الْمُسْتَقْنِعِ كَامِلاً عَلَى فَضِيلَةِ الشَّيْخِ الْأُسْتَاذِ الدُّكْتُور/ خَالِدِ بْنِ عَلِيّ الْمُشَيْقِحِ، رَفَعَ اللَّهُ قَدْرَهُ فِي الدُّنْيَا وَالْآخِرَةِ، وَغَفَرَ لِوَالِدَيْهِ وَزَوْجِهِ وَمَشَايِخِهِ وَطُلَّابِهِ، وَأَصْلَحَ لَهُ فِي ذُرِّيَّتِهِ، وَأَخْبَرَنِي بِأَنَّهُ تَلَقَّاهُ قِرَاءَةً عَلَى الشَّيْخِ حَامِدِ بْنِ أَحْمَدَ بْنِ أَكْرَمَ الْبُخَارِيِّ بِالْمَدِينَةِ النَّبَوِيَّةِ، الَّذِي أَخَذَهُ عَنْ فَضِيلَةِ الشَّيْخِ الْقَاضِي أَبِي عَبْدِ الرَّحْمَنِ عَبْدِ اللَّهِ بْنِ عَبْدِ الْعَزِيزِ بْنِ عَقِيلِ بْنِ عَبْدِ اللَّهِ بْنِ عَبْدِ الْكَرِيمِ بْنِ عَقِيلٍ الْعُنَيْزِيِّ الْحَنْبَلِيِّ.</p>
+
+            <p class="chain-item">وَهُوَ أَخْبَرَنِي أَنَّهُ قَرَأَهُ غَيْبًا عَلَى شَيْخِهِ الْعَلَّامَةِ أَبِي عَبْدِ اللَّهِ عَبْدِ الرَّحْمَنِ بْنِ نَاصِرِ بْنِ عَبْدِ اللَّهِ السَّعْدِيِّ، وَكَذَلِكَ تَلَقَّاهُ عَنْ غَيْرِهِ، وَتَلَقَّاهُ الشَّيْخُ أَبُو عَبْدِ اللَّهِ عَبْدُ الرَّحْمَنِ بْنُ نَاصِرِ بْنِ أَبِي عَبْدِ اللَّهِ السَّعْدِيِّ رِوَايَةً وَدِرَايَةً عَنِ الشَّيْخَيْنِ: الشَّيْخِ صَالِحِ بْنِ عُثْمَانَ الْقَاضِي، وَبِهِ تَخَرَّجَ، وَالشَّيْخِ إِبْرَاهِيمَ بْنِ صَالِحِ بْنِ عِيسَى، وَأُجِيزَ مِنْهُمَا، وَهُمَا أَخَذَا عَنِ الشَّيْخِ أَحْمَدَ بْنِ إِبْرَاهِيمَ بْنِ عِيسَى.</p>
+
+            <p class="chain-item">وَأَخَذَ الشَّيْخُ أَحْمَدُ بْنُ إِبْرَاهِيمَ بْنِ عِيسَى عَنْ كُلٍّ مِنَ: الشَّيْخِ عَبْدِ الرَّحْمَنِ بْنِ حَسَنِ بْنِ مُحَمَّدِ بْنِ عَبْدِ الْوَهَّابِ آلِ الشَّيْخِ الْمُشَرَّفِ التَّمِيمِيِّ، وَابْنِهِ الشَّيْخِ عَبْدِ اللَّطِيفِ بْنِ عَبْدِ الرَّحْمَنِ بْنِ حَسَنِ بْنِ مُحَمَّدِ بْنِ عَبْدِ الْوَهَّابِ، وَالشَّيْخِ عَبْدِ اللَّهِ بْنِ عَبْدِ الرَّحْمَنِ أَبِي بُطَيْنٍ. (ح)</p>
+
+            <p class="chain-item">وَلِلشَّيْخِ الْقَاضِي أَبِي عَبْدِ الرَّحْمَنِ عَبْدِ اللَّهِ بْنِ عَبْدِ الْعَزِيزِ بْنِ عَقِيلِ بْنِ عَبْدِ اللَّهِ بْنِ عَبْدِ الْكَرِيمِ بْنِ عَقِيلٍ الْعُنَيْزِيِّ إِجَازَةٌ مِنَ الْمُحَدِّثِ الشَّيْخِ أَبِي مُحَمَّدٍ عَبْدِ الْحَقِّ بْنِ عَبْدِ الْوَاحِدِ بْنِ مُحَمَّدِ بْنِ هَاشِمٍ الْهِنْدِيِّ ثُمَّ الْمَكِّيِّ الْأَثَرِيِّ، وَيُقَالُ لَهُ الْهَاشِمِيُّ نِسْبَةً إِلَى جَدِّهِ الْمَذْكُورِ، وَهُوَ عَنِ الشَّيْخِ أَحْمَدَ بْنِ سَالِمِ بْنِ عَبْدِ اللَّهِ الْبَغْدَادِيِّ، وَهُوَ عَنِ الْفَقِيهِ الْمُؤَرِّخِ مُفْتِي الْحَنَابِلَةِ وَمُدَرِّسِهِمْ بِمَكَّةَ الْمُشَرَّفَةِ وَإِمَامِ مَقَامِهِمْ بِالْمَسْجِدِ الْحَرَامِ أَبِي عَلِيٍّ مُحَمَّدِ بْنِ عَبْدِ اللَّهِ بْنِ عَلِيِّ بْنِ عُثْمَانَ بْنِ عَلِيِّ بْنِ حُمَيْدٍ الثَّوْرِيِّ النَّجْدِيِّ الْحَنْبَلِيِّ.</p>
+
+            <p class="chain-item">وَأَخَذَهَا رِوَايَةً وَدِرَايَةً عَنْ شَيْخِهِ الشَّيْخِ أَبِي بُطَيْنٍ، وَكَذَلِكَ بِرِوَايَتِهِ مَعَ الشَّيْخِ عَبْدِ الرَّحْمَنِ بْنِ حَسَنٍ وَابْنِهِ الشَّيْخِ عَبْدِ اللَّطِيفِ بْنِ عَبْدِ الرَّحْمَنِ بْنِ الْحَسَنِ، عَنِ الشَّيْخِ عَبْدِ اللَّهِ بْنِ مُحَمَّدِ بْنِ عَبْدِ الْوَهَّابِ، عَنْ أَبِيهِ شَيْخِ الْإِسْلَامِ الشَّيْخِ مُحَمَّدِ بْنِ عَبْدِ الْوَهَّابِ التَّمِيمِيِّ النَّجْدِيِّ، وَهُوَ عَنِ الشَّيْخِ عَبْدِ اللَّهِ بْنِ إِبْرَاهِيمَ بْنِ سَيْفٍ الْفَرَضِيِّ نَزِيلِ الْمَدِينَةِ الْمُنَوَّرَةِ، وَأَجَازَهُ.</p>
+
+            <p class="chain-item">وَأَخَذَ ابْنُ حُمَيْدٍ رِوَايَةً وَدِرَايَةً عَنِ الشَّيْخِ الْعَالِمِ مُحَمَّدِ بْنِ حَمَدٍ الْهُدَيْبِيِّ التَّمِيمِيِّ النَّجْدِيِّ، ثُمَّ الْمَكِّيِّ، ثُمَّ الْمَدَنِيِّ الْحَنْبَلِيِّ، وَهُوَ عَنِ الشَّيْخِ إِبْرَاهِيمَ بْنِ نَاصِرِ بْنِ جُدَيِّدٍ الزُّبَيْرِيِّ الْحَنْبَلِيِّ، وَهُوَ عَنِ الْعَلَّامَةِ شَيْخِ الْحَنَابِلَةِ أَحْمَدَ بْنِ عَبْدِ اللَّهِ بْنِ أَحْمَدَ بْنِ مُحَمَّدٍ الْبَعْلِيِّ الدِّمَشْقِيِّ إِجَازَةً مَعَ طُولِ مُلَازَمَتِهِ لَهُ بِرِوَايَتِهِ.</p>
+
+            <p class="chain-item">وَكَذَا عَبْدُ اللَّهِ بْنُ إِبْرَاهِيمَ بْنِ سَيْفٍ عَنْ شَيْخِ الْمَذْهَبِ أَبِي الْمَوَاهِبِ مُحَمَّدِ بْنِ عَبْدِ الْبَاقِي بْنِ عَبْدِ الْبَاقِي الْحَنْبَلِيِّ الْبَعْلِيِّ، وَأَيْضًا عَنِ الشَّيْخِ عَبْدِ الْقَادِرِ التَّغْلِبِيِّ، كِلَاهُمَا عَنْ وَالِدِ الْأَوَّلِ الشَّيْخِ الْعَلَّامَةِ الْفَقِيهِ الْمُسْنِدِ عَبْدِ الْبَاقِي بْنِ عَبْدِ الْبَاقِي الْحَنْبَلِيِّ الْبَعْلِيِّ الدِّمَشْقِيِّ الْأَزْهَرِيَّةِ الْأَثَرِيِّ، وَأَيْضًا عَنِ الشَّيْخِ مُحَمَّدِ بْنِ بَدْرِ الدِّينِ الْبَلْبَانِيِّ، كِلَاهُمَا عَنِ الشَّيْخِ أَحْمَدَ بْنِ أَبِي الْوَفَاءِ عَلِيِّ بْنِ إِبْرَاهِيمَ الْمُفْلِحِيِّ الْوَفَائِيِّ، وَهُوَ عَنِ الْعَلَّامَةِ الشَّيْخِ مُوسَى بْنِ أَحْمَدَ بْنِ مُوسَى شَرَفِ الدِّينِ أَبِي النَّجَا الْحَجَاوِيِّ.</p>
+
+            <p class="chain-item">فَائِدَةٌ: تَلَقَّى الشَّيْخُ مُحَمَّدُ بْنُ عَبْدِ الْوَهَّابِ الْفِقْهَ الْحَنْبَلِيَّ عَنْ أَبِيهِ عَبْدِ الْوَهَّابِ بْنِ سُلَيْمَانَ، وَهُوَ عَنْ أَبِيهِ سُلَيْمَانَ بْنِ عَلِيٍّ آلِ مُشَرَّفٍ، وَهُوَ عَنِ الشَّيْخِ مُحَمَّدِ بْنِ أَحْمَدَ بْنِ إِسْمَاعِيلَ الْأُشَيْقِرِيِّ، عَنِ الشَّيْخِ أَحْمَدَ بْنِ مُحَمَّدٍ مُشَرَّفٍ التَّمِيمِيِّ، وَهُوَ عَنِ الْعَلَّامَةِ الشَّيْخِ مُوسَى بْنِ أَحْمَدَ بْنِ مُوسَى شَرَفِ الدِّينِ أَبِي النَّجَا الْحَجَاوِيِّ صَاحِبِ الْمَتْنِ، وَهَذَا إِسْنَادُهُ حَنْبَلِيٌّ نَجْدِيٌّ نَفِيسٌ.</p>
+          </div>
+          <div class="appendix-footer">مُلْحَقٌ تَابِعٌ لِإِجَازَةِ السَّمَاعِ الْأَصْلِيَّةِ — كِتَابُ إِتْمَامِ الْمَطَالِبِ بِتَكْمِيلِ دَلِيلِ الطَّالِبِ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+      </div>
+    </div>
+
+    <!-- APPENDIX 2: أخصر المختصرات -->
+    <div class="page-shell" id="appx2Shell">
+      <div class="page-scale" id="appx2Scale">
+    <div class="appendix-page">
+      <div class="appendix-frame">
+        <div class="appendix-inner">
+          <div class="appendix-content" id="appx2Content">
+            <div class="content-fit" id="appx2ContentFit">
+          <div class="appendix-title">الْمُلْحَقُ الثَّانِي</div>
+          <div class="appendix-subtitle">سَنَدُ إِجَازَةِ كِتَابِ «أَخْصَرِ الْمُخْتَصَرَاتِ»</div>
+          <div class="appendix-body">
+            <p>وَأُخْبِرُهُ أَنِّي قَدْ سَمِعْتُهُ كَامِلًا عَلَى شَيْخِنَا الشَّيْخِ الْأُسْتَاذِ الدُّكْتُورِ خَالِدِ بْنِ عَلِيٍّ الْمُشَيْقِحِ، وَأَخْبَرَنِي أَنَّهُ يَرْوِيهِ إِجَازَةً عَنْ شَيْخِهِ الشَّيْخِ عَبْدِ الْمُحْسِنِ بْنِ الْمُنِيفِ، عَنِ الشَّيْخِ الْعَلَّامَةِ حَمُودِ التُّوَيْجِرِيِّ عَنِ الْقَاضِي عَبْدِ اللَّهِ بْنِ عَبْدِ الْعَزِيزِ الْعَنْقَرِيِّ، عَنْ مُحَمَّدِ بْنِ إِبْرَاهِيمَ بْنِ مَحْمُودٍ النَّجْدِيِّ الْحَنْبَلِيِّ عَنِ الشَّيْخِ عَبْدِ اللَّهِ أَبَا بُطَيْنٍ، عَنْ حَمَدِ بْنِ نَاصِرِ بْنِ مَعْمَرٍ عَنْ شَيْخِ الْإِسْلَامِ مُحَمَّدِ بْنِ عَبْدِ الْوَهَّابِ.</p>
+
+            <p class="chain-item">(ح) وَيَرْوِيهِ الشَّيْخُ عَبْدُ اللَّهِ الْعَنْقَرِيُّ عَنْ عَبْدِ اللَّهِ بْنِ عَبْدِ اللَّطِيفِ آلِ الشَّيْخِ وَالشَّيْخِ حَمَدِ بْنِ مُحَمَّدِ بْنِ فَارِسٍ، كِلَاهُمَا عَنْ عَبْدِ الرَّحْمَنِ بْنِ حَسَنٍ، عَنْ جَدِّهِ الشَّيْخِ مُحَمَّدِ بْنِ عَبْدِ الْوَهَّابِ.</p>
+
+            <p class="chain-item">(ح) وَيَرْوِيهِ الشَّيْخُ عَبْدُ اللَّهِ الْعَنْقَرِيُّ عَنْ سَعْدِ بْنِ عَتِيقٍ قَالَ: أَخْبَرَنَا بِهِ أَحْمَدُ بْنُ إِبْرَاهِيمَ بْنِ عِيسَى، عَنْ عَبْدِ الرَّحْمَنِ بْنِ حَسَنٍ عَنْ جَدِّهِ مُحَمَّدِ بْنِ عَبْدِ الْوَهَّابِ عَنْ عَبْدِ اللَّهِ بْنِ إِبْرَاهِيمَ بْنِ سَيْفٍ الْفَرَضِيِّ عَنْ أَبِي الْمَوَاهِبِ مُحَمَّدِ بْنِ عَبْدِ الْبَاقِي الْحَنْبَلِيِّ، عَنِ الْمُؤَلِّفِ الْبَلْبَانِيِّ.</p>
+
+            <p class="chain-item">وَبِرِوَايَةِ الشَّيْخِ أَحْمَدَ بْنِ إِبْرَاهِيمَ بْنِ عِيسَى عَنِ الشَّيْخِ عَبْدِ اللَّهِ أَبَا بُطَيْنٍ، عَنْ مُحَمَّدِ بْنِ عَبْدِ اللَّهِ بْنِ حَمَدِ بْنِ طَرَّادٍ الدَّوْسَرِيِّ عَنْ عَبْدِ الرَّحْمَنِ بْنِ عَبْدِ اللَّهِ الْبَعْلِيِّ، عَنْ أَبِي الْمَوَاهِبِ، عَنِ الْمُؤَلِّفِ الْبَلْبَانِيِّ.</p>
+
+            <p class="chain-item">(ح) وَأَخْبَرَ الشَّيْخُ الْأُسْتَاذُ الدُّكْتُورُ خَالِدُ بْنُ عَلِيٍّ الْمُشَيْقِحُ أَنَّهُ يَرْوِيهِ أَيْضًا عَنِ الشَّيْخِ إِسْمَاعِيلَ بْنِ مُحَمَّدِ بْنِ بَدْرَانَ الدُّومِيِّ الْحَنْبَلِيِّ بِعُمُومِ إِجَازَتِهِ لَهُ عَنْ شُيُوخِهِ الثَّلَاثَةِ: عَبْدِ الْقَادِرِ بْنِ أَحْمَدَ الْحَتَّاوِيِّ وَعَبْدِ الْمَجِيدِ بْنِ أَحْمَدَ بْنِ عَبْدِ الْمَجِيدِ الدُّومِيِّ وَأَحْمَدَ الشَّامِيِّ الدُّومِيِّ ثَلَاثَتُهُمْ عَنْ مُصْطَفَى بْنِ أَحْمَدَ بْنِ حَسَنٍ الشَّطِّيِّ، عَنْ أَبِيهِ أَحْمَدَ الشَّطِّيِّ وَعَمِّهِ مُحَمَّدِ بْنِ حَسَنٍ الشَّطِّيِّ كِلَاهُمَا عَنْ وَالِدِهِمَا حَسَنِ بْنِ عُمَرَ الشَّطِّيِّ، عَنْ مُصْطَفَى بْنِ سَعْدٍ الرُّحَيْبَانِيِّ عَنْ مُحَمَّدِ بْنِ أَحْمَدَ السَّفَارِينِيِّ وَأَحْمَدَ الْبَعْلِيِّ، كِلَاهُمَا عَنْ أَبِي الْمَوَاهِبِ عَنِ الْمُؤَلِّفِ.</p>
+          </div>
+          <div class="appendix-footer">مُلْحَقٌ تَابِعٌ لِإِجَازَةِ السَّمَاعِ الْأَصْلِيَّةِ — كِتَابُ إِتْمَامِ الْمَطَالِبِ بِتَكْمِيلِ دَلِيلِ الطَّالِبِ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+/* ---------- MODE DETECTION (admin app vs. restricted student link) ---------- */
+const urlParams = new URLSearchParams(window.location.search);
+const isStudentMode = urlParams.get('mode') === 'student';
+const linkToken = urlParams.get('token') || '';
+const LOCK_KEY = isStudentMode ? ('ijaza-link-used-' + (linkToken || 'default')) : null;
+let linkAlreadyUsed = false;
+
+function initModeUI(){
+  if(isStudentMode){
+    document.getElementById('linkGenPanel').style.display = 'none';
+    document.getElementById('adminOnlyControls').style.display = 'none';
+    document.getElementById('editModeBtn').style.display = 'none';
+    document.getElementById('resetFormBtn').style.display = 'none';
+    checkLinkLock();
+  } else {
+    document.getElementById('linkGenPanel').style.display = 'block';
+    document.getElementById('attestBlock').style.display = 'none';
+  }
+}
+
+function showLockedScreen(){
+  linkAlreadyUsed = true;
+  document.getElementById('formScreen').style.display = 'none';
+  document.getElementById('certScreen').style.display = 'none';
+  document.getElementById('lockedScreen').style.display = 'block';
+}
+
+async function checkLinkLock(){
+  if(!LOCK_KEY) return;
+
+  /* Claude.ai artifacts: shared cross-visitor storage (true single-use) */
+  if(window.storage){
+    try{
+      const result = await window.storage.get(LOCK_KEY, true);
+      if(result && result.value === 'true'){ showLockedScreen(); }
+    }catch(e){
+      /* key not found yet -> link not used, proceed normally */
+    }
+    return;
+  }
+
+  /* Any other static host (e.g. GitHub Pages): localStorage fallback.
+     Note: this only blocks reuse from the SAME browser/device, not a
+     true cross-device lock, since a static host has no shared backend. */
+  try{
+    if(localStorage.getItem(LOCK_KEY) === 'true'){ showLockedScreen(); }
+  }catch(e){ /* localStorage unavailable (e.g. private mode) -> allow through */ }
+}
+
+async function markLinkUsed(){
+  if(!LOCK_KEY) return;
+
+  if(window.storage){
+    try{ await window.storage.set(LOCK_KEY, 'true', true); }
+    catch(e){ /* fail silently */ }
+    return;
+  }
+
+  try{ localStorage.setItem(LOCK_KEY, 'true'); }
+  catch(e){ /* fail silently */ }
+}
+
+function generateStudentLink(){
+  const token = (crypto && crypto.randomUUID) ? crypto.randomUUID().slice(0,8) : Math.random().toString(36).slice(2,10);
+  const url = window.location.origin + window.location.pathname + '?mode=student&token=' + token;
+  document.getElementById('linkOutput').value = url;
+  document.getElementById('linkOutputWrap').style.display = 'block';
+  document.getElementById('copyMsg').textContent = '';
+}
+
+function copyStudentLink(){
+  const input = document.getElementById('linkOutput');
+  input.select();
+  const msg = document.getElementById('copyMsg');
+  navigator.clipboard.writeText(input.value).then(function(){
+    msg.textContent = 'تم نسخ الرابط ✓';
+  }).catch(function(){
+    try{
+      document.execCommand('copy');
+      msg.textContent = 'تم نسخ الرابط ✓';
+    }catch(e){
+      msg.textContent = 'يرجى نسخ الرابط يدوياً';
+    }
+  });
+}
+
+initModeUI();
+
+function pad(n){return n.toString().padStart(2,'0');}
+
+const ARABIC_DIGITS = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+function toArabicDigits(str){
+  return String(str).replace(/[0-9]/g, d => ARABIC_DIGITS[d]);
+}
+
+function makeSerial(){
+  const d = new Date();
+  const rand = Math.floor(1000 + Math.random()*9000);
+  const num = d.getFullYear().toString() + pad(d.getMonth()+1) + pad(d.getDate()) + '-' + rand;
+  return 'رقم الإجازة: ' + toArabicDigits(num);
+}
+
+function hijriDate(){
+  try{
+    const fmt = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura-nu-arab', {year:'numeric', month:'long', day:'numeric'});
+    return fmt.format(new Date());
+  }catch(e){
+    return toArabicDigits(new Date().toLocaleDateString('ar-EG'));
+  }
+}
+
+function fitPageToShell(contentId, fitId){
+  const content = document.getElementById(contentId);
+  const fitEl = document.getElementById(fitId);
+  if(!content || !fitEl) return;
+  fitEl.style.transform = 'none';
+  const availableH = content.clientHeight;
+  const neededH = fitEl.scrollHeight;
+  if(neededH > availableH && availableH > 0){
+    const scale = (availableH / neededH) * 0.96; /* safety margin */
+    fitEl.style.transform = 'scale(' + scale + ')';
+  }
+}
+
+function fitAllPages(){
+  fitPageToShell('certContent', 'certContentFit');
+  fitPageToShell('appx1Content', 'appx1ContentFit');
+  fitPageToShell('appx2Content', 'appx2ContentFit');
+}
+
+const FONT_SIZE_MAP = {
+  small:  {body:13,   appendix:11.5},
+  medium: {body:15.5, appendix:13.5},
+  large:  {body:18,   appendix:15.5},
+  xlarge: {body:20.5, appendix:17.5}
+};
+
+function applyFontSettings(fontFamily, sizeKey){
+  const sizes = FONT_SIZE_MAP[sizeKey] || FONT_SIZE_MAP.medium;
+  document.querySelectorAll('.cert-body').forEach(function(el){
+    el.style.fontFamily = fontFamily;
+    el.style.fontSize = sizes.body + 'px';
+  });
+  document.querySelectorAll('.appendix-body').forEach(function(el){
+    el.style.fontFamily = fontFamily;
+    el.style.fontSize = sizes.appendix + 'px';
+  });
+}
+
+let editMode = false;
+function toggleEditMode(){
+  editMode = !editMode;
+  const targets = ['certContentFit', 'appx1ContentFit', 'appx2ContentFit']
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+
+  targets.forEach(function(el){
+    el.setAttribute('contenteditable', editMode ? 'true' : 'false');
+    el.classList.toggle('editing', editMode);
+    if(editMode){ el.style.transform = 'none'; }
+  });
+
+  document.getElementById('editModeBtn').textContent = editMode ? 'تم — إنهاء التحرير' : 'تحرير النص';
+
+  if(!editMode){
+    fitAllPages();
+  }
+}
+
+/* CSS aspect-ratio isn't computed reliably by every print/export renderer,
+   which was leaving the bottom of the page frame blank. Setting an explicit
+   pixel height (A4 landscape ratio) is far more universally respected. */
+function sizePageShells(){
+  document.querySelectorAll('.page-shell').forEach(function(el){
+    const w = el.getBoundingClientRect().width;
+    if(w > 0){
+      el.style.height = Math.round(w * 210 / 297) + 'px';
+    }
+  });
+}
+
+function generateCert(){
+  if(isStudentMode && linkAlreadyUsed) return;
+
+  const nameInput = document.getElementById('studentName');
+  const name = nameInput.value.trim();
+  const errEl = document.getElementById('nameError');
+
+  if(!name){
+    errEl.textContent = 'الرجاء إدخال الاسم قبل إصدار الإجازة';
+    nameInput.focus();
+    return;
+  }
+  errEl.textContent = '';
+
+  if(isStudentMode){
+    const attestEl = document.getElementById('attestCheckbox');
+    const attestErr = document.getElementById('attestError');
+    if(!attestEl.checked){
+      attestErr.textContent = 'الإقرار مطلوب قبل إصدار الإجازة';
+      attestEl.focus();
+      return;
+    }
+    attestErr.textContent = '';
+
+    const methodEl = document.querySelector('input[name="completionMethod"]:checked');
+    const methodErr = document.getElementById('methodError');
+    if(!methodEl){
+      methodErr.textContent = 'الرجاء تحديد طريقة إتمام السماع';
+      return;
+    }
+    methodErr.textContent = '';
+  }
+
+  const gender = document.querySelector('input[name="gender"]:checked').value;
+  const isMale = gender === 'male';
+
+  lastStudentName = name;
+  const nameSpan = '<span class="inline-name">' + name + '</span>';
+
+  const mainParaHTML = (isMale
+    ? 'أَمَّا بَعْدُ: فَقَدْ سَمِعَ عَلَيَّ الطَّالِبُ: ' + nameSpan
+    : 'أَمَّا بَعْدُ: فَقَدْ سَمِعَتْ عَلَيَّ الطَّالِبَةُ: ' + nameSpan
+  ) + ' كِتَابَ <span class="book-title">«إِتْمَامِ الْمَطَالِبِ بِتَكْمِيلِ دَلِيلِ الطَّالِبِ»</span> - الطَّبْعَةُ الثَّانِيَةُ - ١٤٤٧هـ - طَبْعَةُ دَارِ طَيْبَةَ الْخَضْرَاءِ - كَامِلاً فِي سَبْعَةِ مَجَالِسَ؛ بَدَأَتْ يَوْمَ السَّبْتِ الْمُوَافِقِ السَّابِعَ وَالْعِشْرِينَ مِنْ شَهْرِ اللَّهِ الْمُحَرَّمِ عَامَ ١٤٤٨هـ، وَتَمَّ خَتْمُهُ بِحَمْدِ اللَّهِ يَوْمَ الْجُمُعَةِ الْمُوَافِقِ الثَّالِثَ مِنْ شَهْرِ صَفَرٍ عَامَ ١٤٤٨هـ، وَقَدْ أَجَزْتُ' + (isMale ? 'هُ' : 'هَا') +
+    ' رِوَايَةً خَاصَّةً فِي هَذَا الْكِتَابِ، وَأَجَزْتُ' + (isMale ? 'هُ' : 'هَا') +
+    ' فِي كِتَابِ «زَادِ الْمُسْتَقْنِعِ فِي اخْتِصَارِ الْمُقْنِعِ»، كَمَا أَجَزْتُ' + (isMale ? 'هُ' : 'هَا') +
+    ' فِي كِتَابِ «أَخْصَرِ الْمُخْتَصَرَاتِ» (وَالْأَسَانِيدُ مُثْبَتَةٌ فِي الْمُلْحَقَيْنِ الْمُرْفَقَيْنِ بِهَذِهِ الْإِجَازَةِ).';
+
+  document.getElementById('mainPara').innerHTML = mainParaHTML;
+
+  document.getElementById('wasiyaPara').innerHTML = isMale
+    ? 'وَأُوصِيهِ وَنَفْسِي بِتَقْوَى اللَّهِ عَزَّ وَجَلَّ، وَالْإِخْلَاصِ فِي السِّرِّ وَالْعَلَنِ، وَأَنْ يَسْتَمِرَّ فِي طَلَبِ الْعِلْمِ النَّافِعِ، وَأَنْ يَبْذُلَ جُهْدَهُ فِي نَشْرِهِ، وَأَنْ لَا يَنْسَانِي مِنْ صَالِحِ دُعَائِهِ لِي وَلِوَالِدَيَّ وَمَشَايِخِي وَطُلَّابِي، وَزَوْجَتِي وَأَوْلَادِي فِي خَلَوَاتِهِ وَجَلَوَاتِهِ.'
+    : 'وَأُوصِيهَا وَنَفْسِي بِتَقْوَى اللَّهِ عَزَّ وَجَلَّ، وَالْإِخْلَاصِ فِي السِّرِّ وَالْعَلَنِ، وَأَنْ تَسْتَمِرَّ فِي طَلَبِ الْعِلْمِ النَّافِعِ، وَأَنْ تَبْذُلَ جُهْدَهَا فِي نَشْرِهِ، وَأَنْ لَا تَنْسَانِي مِنْ صَالِحِ دُعَائِهَا لِي وَلِوَالِدَيَّ وَمَشَايِخِي وَطُلَّابِي، وَزَوْجَتِي وَأَوْلَادِي فِي خَلَوَاتِهَا وَجَلَوَاتِهَا.';
+
+  const showDate = document.getElementById('showDateToggle').checked;
+  const customDateVal = document.getElementById('customDate').value.trim();
+  const dateBlock = document.getElementById('dateFooterBlock');
+  const certFooter = document.getElementById('certFooter');
+
+  if(showDate){
+    dateBlock.style.display = '';
+    certFooter.classList.remove('single-item');
+    document.getElementById('issueDate').textContent = customDateVal ? customDateVal : hijriDate();
+  } else {
+    dateBlock.style.display = 'none';
+    certFooter.classList.add('single-item');
+  }
+
+  const showSerial = document.getElementById('showSerialToggle').checked;
+  const serialEl = document.getElementById('serialNo');
+  if(showSerial){
+    serialEl.style.display = '';
+    serialEl.textContent = makeSerial();
+  } else {
+    serialEl.style.display = 'none';
+  }
+
+  const fontFamily = document.getElementById('fontFamilySelect').value;
+  const fontSizeKey = document.getElementById('fontSizeSelect').value;
+  applyFontSettings(fontFamily, fontSizeKey);
+
+  document.getElementById('formScreen').style.display = 'none';
+  document.getElementById('certScreen').style.display = 'block';
+  window.scrollTo(0,0);
+
+  if(isStudentMode){
+    linkAlreadyUsed = true;
+    markLinkUsed();
+  }
+
+  requestAnimationFrame(function(){
+    sizePageShells();
+    requestAnimationFrame(fitAllPages);
+  });
+}
+
+window.addEventListener('resize', function(){
+  if(document.getElementById('certScreen').style.display === 'block'){
+    sizePageShells();
+    fitAllPages();
+  }
+});
+
+if(document.fonts && document.fonts.ready){
+  document.fonts.ready.then(function(){
+    if(document.getElementById('certScreen').style.display === 'block'){
+      sizePageShells();
+      fitAllPages();
+    }
+  });
+}
+
+function resetForm(){
+  document.getElementById('certScreen').style.display = 'none';
+  document.getElementById('formScreen').style.display = 'block';
+  document.getElementById('studentName').value = '';
+  document.getElementById('nameError').textContent = '';
+  document.getElementById('attestCheckbox').checked = false;
+  document.getElementById('attestError').textContent = '';
+  document.querySelectorAll('input[name="completionMethod"]').forEach(function(el){ el.checked = false; });
+  document.getElementById('methodError').textContent = '';
+}
+
+let lastStudentName = 'ijaza';
+
+async function downloadImage(){
+  if(editMode){ toggleEditMode(); }
+  sizePageShells();
+  fitAllPages();
+  await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+  const pages = [
+    {id:'certShell', label:'الإجازة'},
+    {id:'appx1Shell', label:'الملحق-الأول'},
+    {id:'appx2Shell', label:'الملحق-الثاني'}
+  ];
+
+  for(const p of pages){
+    const node = document.getElementById(p.id);
+    if(!node) continue;
+    const canvas = await html2canvas(node, {scale:2, backgroundColor:'#f6ecd2'});
+    const link = document.createElement('a');
+    link.download = 'إجازة-سماع-' + lastStudentName + '-' + p.label + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    await new Promise(resolve => setTimeout(resolve, 350));
+  }
+}
+
+function printCertificate(){
+  if(editMode){ toggleEditMode(); }
+  document.querySelectorAll('.page-shell').forEach(function(el){ el.style.height = ''; });
+  void document.body.offsetHeight;
+  fitAllPages();
+  setTimeout(function(){ window.print(); }, 50);
+}
+
+window.addEventListener('beforeprint', function(){
+  document.querySelectorAll('.page-shell').forEach(function(el){ el.style.height = ''; });
+  void document.body.offsetHeight; /* force synchronous reflow before measuring */
+  fitAllPages();
+});
+
+window.addEventListener('afterprint', function(){
+  sizePageShells();
+  fitAllPages();
+});
+
+document.getElementById('showDateToggle').addEventListener('change', function(){
+  document.getElementById('customDateWrap').style.display = this.checked ? 'block' : 'none';
+});
+
+document.getElementById('studentName').addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){ generateCert(); }
+});
+</script>
+
+</body>
+</html>
