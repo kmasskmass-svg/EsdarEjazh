@@ -302,25 +302,30 @@
   }
   .student-hints p{margin:0;}
 
+  /* Only the certificate pages scroll horizontally on narrow screens (the
+     toolbar and hints stay outside this wrapper so they're always visible
+     and never get scrolled away). Text stays at a legible minimum size
+     instead of shrinking illegibly small; swipe/scroll to see the rest. */
+  .pages-scroll-wrap{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    padding:4px 4px 12px;
+  }
+
   /* Each page is a fixed A4-landscape box. The frame/border/background always
      fills the whole page (absolute-inset layers, not a %-height chain) so a
      short certificate never leaves a blank gap; only the text inside is
-     auto-scaled to fit so it never spills onto a second page. On screen it
-     shrinks to fit any viewport (pinch-zoom to read on mobile); exporting
-     (image/print) always captures it at full print-quality size regardless
-     of the current on-screen zoom level. */
+     auto-scaled to fit so it never spills onto a second page. */
   .page-shell{
     width:297mm;
     max-width:100%;
+    min-width:640px;
     aspect-ratio:297/210;
     margin:0 auto 26px;
     box-shadow:0 25px 70px rgba(0,0,0,0.5);
     border-radius:2px;
     overflow:hidden;
     position:relative;
-  }
-  body.export-mode .page-shell{
-    max-width:none !important;
   }
   .page-scale{
     position:absolute;
@@ -596,11 +601,13 @@
     .page-shell{
       box-shadow:none !important;
       width:100% !important;
+      min-width:0 !important;
       height:190mm !important;
       max-width:none !important;
       aspect-ratio:auto !important;
       margin-bottom:0 !important;
     }
+    .pages-scroll-wrap{overflow:visible !important; padding:0 !important;}
     /* Print always uses a fixed, print-safe font size instead of the
        dynamic on-screen auto-fit transform, since JS timing around the
        browser's print pass is not reliably synchronized across browsers
@@ -647,7 +654,7 @@
   <div class="form-card" id="formScreen">
     <div class="form-eyebrow">مركز الإجازات العلمية</div>
     <div class="form-title">إصدار إجازة سماع</div>
-    <p class="form-sub">أدخل بياناتك ليتم إصدار <b>إجازة سماع الكتاب</b> باسمك، منسّقة ومختومة، جاهزة للطباعة والتحميل.</p>
+    <p class="form-sub">أدخل بياناتك ليتم إصدار <b>إجازة سماع الكتاب</b> باسمك، منسّقة ومختومة، جاهزة للطباعة والتحميل. <span id="prefComputerNote" style="display:none;">يفضّل فتح الرابط على جهاز كمبيوتر.</span></p>
 
     <label for="studentName" id="nameLabel">الاسم الكامل</label>
     <input type="text" id="studentName" placeholder="اكتب اسمك هنا" autocomplete="off">
@@ -765,6 +772,7 @@
       <p>• يُفضَّل تقنياً استخدام جهاز حاسوب عند الطباعة أو التصدير للحصول على أفضل جودة.</p>
     </div>
 
+    <div class="pages-scroll-wrap">
     <div class="page-shell" id="certShell">
       <div class="page-scale" id="certScale">
         <div class="certificate" id="certificateNode">
@@ -907,6 +915,8 @@
       </div>
     </div>
 
+    </div>
+
   </div>
 
 </div>
@@ -926,6 +936,7 @@ function initModeUI(){
     document.getElementById('editModeBtn').style.display = 'none';
     document.getElementById('resetFormBtn').style.display = 'none';
     document.getElementById('studentHints').style.display = 'block';
+    document.getElementById('prefComputerNote').style.display = 'inline';
     checkLinkLock();
   } else {
     document.getElementById('linkGenPanel').style.display = 'block';
@@ -1389,10 +1400,8 @@ let lastStudentName = 'ijaza';
 async function downloadImage(){
   if(editMode){ toggleEditMode(); }
 
-  document.body.classList.add('export-mode');
-  sizePageShells();
-  fitAllPages();
-  await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  const FULL_W = 1123; // ~297mm @ 96dpi
+  const FULL_H = 794;  // ~210mm @ 96dpi
 
   const pages = [
     {id:'certShell', label:'الإجازة'},
@@ -1403,17 +1412,61 @@ async function downloadImage(){
   for(const p of pages){
     const node = document.getElementById(p.id);
     if(!node) continue;
-    const canvas = await html2canvas(node, {scale:2, backgroundColor:'#f6ecd2'});
+    const canvas = await html2canvas(node, {
+      scale: 2,
+      backgroundColor: '#f6ecd2',
+      width: FULL_W,
+      height: FULL_H,
+      windowWidth: FULL_W,
+      windowHeight: FULL_H,
+      onclone: function(clonedDoc, clonedNode){
+        clonedNode.style.width = FULL_W + 'px';
+        clonedNode.style.height = FULL_H + 'px';
+        clonedNode.style.minWidth = '0';
+        clonedNode.style.maxWidth = 'none';
+        clonedNode.style.aspectRatio = 'auto';
+        clonedNode.style.margin = '0';
+        const wrap = clonedNode.closest('.pages-scroll-wrap');
+        if(wrap){ wrap.style.overflow = 'visible'; wrap.style.padding = '0'; }
+
+        const fit = clonedNode.querySelector('.content-fit');
+        if(fit){ fit.style.transform = 'none'; }
+
+        /* Use the same reliable, pre-validated print-safe font sizes here
+           instead of trusting a freshly computed dynamic scale (which was
+           the source of earlier sizing bugs). */
+        clonedNode.querySelectorAll('.cert-body').forEach(function(el){
+          el.style.fontSize = '13px';
+          el.style.lineHeight = '1.62';
+        });
+        clonedNode.querySelectorAll('.cert-body p').forEach(function(el){
+          el.style.margin = '0 0 9px';
+        });
+        clonedNode.querySelectorAll('.cert-footer').forEach(function(el){
+          el.style.marginTop = '14px';
+        });
+        clonedNode.querySelectorAll('.appendix-body').forEach(function(el){
+          el.style.fontSize = '11px';
+          el.style.lineHeight = '1.45';
+        });
+        clonedNode.querySelectorAll('.appendix-body p').forEach(function(el){
+          el.style.margin = '0 0 7px';
+        });
+        clonedNode.querySelectorAll('.appendix-title').forEach(function(el){
+          el.style.fontSize = '22px';
+        });
+        clonedNode.querySelectorAll('.appendix-subtitle').forEach(function(el){
+          el.style.fontSize = '12px';
+          el.style.marginBottom = '12px';
+        });
+      }
+    });
     const link = document.createElement('a');
     link.download = 'إجازة-سماع-' + lastStudentName + '-' + p.label + '.png';
     link.href = canvas.toDataURL('image/png');
     link.click();
     await new Promise(resolve => setTimeout(resolve, 350));
   }
-
-  document.body.classList.remove('export-mode');
-  sizePageShells();
-  fitAllPages();
 }
 
 function printCertificate(){
