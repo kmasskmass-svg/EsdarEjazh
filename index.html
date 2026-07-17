@@ -626,11 +626,36 @@
         <option value="xlarge">كبير جداً</option>
       </select>
 
-      <label for="signatureUpload">توقيع وختم المُجيز (اختياري)</label>
-      <input type="file" id="signatureUpload" accept="image/*">
-      <div id="signaturePreviewWrap" style="display:none; margin:-10px 0 20px;">
-        <img id="signaturePreviewImg" alt="معاينة التوقيع والختم" style="max-height:70px; display:block; margin:0 auto;">
-        <button type="button" onclick="clearSignatureUpload()" style="display:block; margin:8px auto 0; background:none; border:none; color:var(--maroon); font-family:'Reem Kufi', sans-serif; font-size:12px; cursor:pointer; text-decoration:underline;">إزالة الصورة</button>
+      <label for="sealUpload">خَتْمُ المُجيز (اختياري)</label>
+      <input type="file" id="sealUpload" accept="image/*">
+      <div id="sealPreviewWrap" style="display:none; margin:-10px 0 20px;">
+        <img id="sealPreviewImg" alt="معاينة الختم" style="max-height:70px; display:block; margin:0 auto;">
+        <button type="button" onclick="clearSealUpload()" style="display:block; margin:8px auto 0; background:none; border:none; color:var(--maroon); font-family:'Reem Kufi', sans-serif; font-size:12px; cursor:pointer; text-decoration:underline;">إزالة الختم</button>
+      </div>
+
+      <label>تَوْقِيعُ المُجيز (اختياري)</label>
+      <div class="gender-row" style="margin-bottom:10px;">
+        <label class="gender-opt">
+          <input type="radio" name="signatureMode" value="upload" checked>
+          <span>رفع صورة</span>
+        </label>
+        <label class="gender-opt">
+          <input type="radio" name="signatureMode" value="draw">
+          <span>رسم التوقيع</span>
+        </label>
+      </div>
+
+      <div id="signatureUploadWrap">
+        <input type="file" id="signatureUpload" accept="image/*">
+        <div id="signaturePreviewWrap" style="display:none; margin:-10px 0 20px;">
+          <img id="signaturePreviewImg" alt="معاينة التوقيع" style="max-height:70px; display:block; margin:0 auto;">
+          <button type="button" onclick="clearSignatureUpload()" style="display:block; margin:8px auto 0; background:none; border:none; color:var(--maroon); font-family:'Reem Kufi', sans-serif; font-size:12px; cursor:pointer; text-decoration:underline;">إزالة الصورة</button>
+        </div>
+      </div>
+
+      <div id="signatureDrawWrap" style="display:none;">
+        <canvas id="signatureCanvas" width="400" height="140" style="width:100%; height:120px; background:#fffdf6; border:1px solid #cbb884; border-radius:4px; touch-action:none; cursor:crosshair;"></canvas>
+        <button type="button" onclick="clearSignatureCanvas()" style="display:block; margin:8px auto 20px; background:none; border:none; color:var(--maroon); font-family:'Reem Kufi', sans-serif; font-size:12px; cursor:pointer; text-decoration:underline;">مسح الرسم</button>
       </div>
     </div>
 
@@ -737,7 +762,10 @@
             <div class="footer-block">
               <div class="label">الْمُجِيز</div>
               <div class="signature">كُلَيْبُ بْنُ أَحْمَدَ بْنِ ضَيْفِ اللَّهِ الزَّهْرَانِيّ</div>
-              <img id="certSignatureImg" alt="توقيع وختم المجيز" style="display:none; max-height:80px; margin-top:20px;">
+              <div style="display:flex; align-items:center; justify-content:center; gap:16px; margin-top:20px;">
+                <img id="certSignatureImg" alt="توقيع المجيز" style="display:none; max-height:70px;">
+                <img id="certSealImg" alt="ختم المجيز" style="display:none; max-height:80px;">
+              </div>
             </div>
           </div>
 
@@ -909,7 +937,8 @@ function copyStudentLink(){
 }
 
 initModeUI();
-loadSharedSignature();
+loadSharedImages();
+setupSignatureCanvas();
 
 function pad(n){return n.toString().padStart(2,'0');}
 
@@ -960,21 +989,62 @@ const FONT_SIZE_MAP = {
   xlarge: {body:20.5, appendix:17.5}
 };
 
+let sealImageDataURL = null;
 let signatureImageDataURL = null;
+let signatureMode = 'upload';
+let canvasHasDrawing = false;
+const SEAL_STORAGE_KEY = 'ijaza-seal-image';
 const SIGNATURE_STORAGE_KEY = 'ijaza-signature-image';
 
-async function loadSharedSignature(){
+async function loadSharedImages(){
   try{
     if(!window.storage) return;
-    const result = await window.storage.get(SIGNATURE_STORAGE_KEY, true);
-    if(result && result.value){
-      signatureImageDataURL = result.value;
+    const sealResult = await window.storage.get(SEAL_STORAGE_KEY, true);
+    if(sealResult && sealResult.value){
+      sealImageDataURL = sealResult.value;
+      if(!isStudentMode){
+        document.getElementById('sealPreviewImg').src = sealImageDataURL;
+        document.getElementById('sealPreviewWrap').style.display = 'block';
+      }
+    }
+  }catch(e){ /* no shared seal saved yet */ }
+
+  try{
+    if(!window.storage) return;
+    const sigResult = await window.storage.get(SIGNATURE_STORAGE_KEY, true);
+    if(sigResult && sigResult.value){
+      signatureImageDataURL = sigResult.value;
       if(!isStudentMode){
         document.getElementById('signaturePreviewImg').src = signatureImageDataURL;
         document.getElementById('signaturePreviewWrap').style.display = 'block';
       }
     }
-  }catch(e){ /* no shared signature saved yet, or storage unavailable */ }
+  }catch(e){ /* no shared signature saved yet */ }
+}
+
+function handleSealUpload(e){
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt){
+    sealImageDataURL = evt.target.result;
+    document.getElementById('sealPreviewImg').src = sealImageDataURL;
+    document.getElementById('sealPreviewWrap').style.display = 'block';
+    if(window.storage){
+      window.storage.set(SEAL_STORAGE_KEY, sealImageDataURL, true).catch(function(){});
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearSealUpload(){
+  sealImageDataURL = null;
+  document.getElementById('sealUpload').value = '';
+  document.getElementById('sealPreviewWrap').style.display = 'none';
+  document.getElementById('certSealImg').style.display = 'none';
+  if(window.storage){
+    window.storage.delete(SEAL_STORAGE_KEY, true).catch(function(){});
+  }
 }
 
 function handleSignatureUpload(e){
@@ -1000,6 +1070,56 @@ function clearSignatureUpload(){
   if(window.storage){
     window.storage.delete(SIGNATURE_STORAGE_KEY, true).catch(function(){});
   }
+}
+
+/* ---------- Draw-a-signature canvas ---------- */
+function setupSignatureCanvas(){
+  const canvas = document.getElementById('signatureCanvas');
+  const ctx = canvas.getContext('2d');
+  ctx.lineWidth = 2.4;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#2b2013';
+
+  let drawing = false;
+
+  function getPos(evt){
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const point = evt.touches ? evt.touches[0] : evt;
+    return { x: (point.clientX - rect.left) * scaleX, y: (point.clientY - rect.top) * scaleY };
+  }
+
+  function start(evt){
+    evt.preventDefault();
+    drawing = true;
+    canvasHasDrawing = true;
+    const p = getPos(evt);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+  }
+  function move(evt){
+    if(!drawing) return;
+    evt.preventDefault();
+    const p = getPos(evt);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+  }
+  function end(){ drawing = false; }
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start, {passive:false});
+  canvas.addEventListener('touchmove', move, {passive:false});
+  canvas.addEventListener('touchend', end);
+}
+
+function clearSignatureCanvas(){
+  const canvas = document.getElementById('signatureCanvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  canvasHasDrawing = false;
 }
 
 function applyFontSettings(fontFamily, sizeKey){
@@ -1125,9 +1245,21 @@ function generateCert(){
     serialEl.style.display = 'none';
   }
 
+  const certSealImg = document.getElementById('certSealImg');
+  if(sealImageDataURL){
+    certSealImg.src = sealImageDataURL;
+    certSealImg.style.display = 'block';
+  } else {
+    certSealImg.style.display = 'none';
+  }
+
+  let finalSignature = signatureImageDataURL;
+  if(signatureMode === 'draw' && canvasHasDrawing){
+    finalSignature = document.getElementById('signatureCanvas').toDataURL('image/png');
+  }
   const certSigImg = document.getElementById('certSignatureImg');
-  if(signatureImageDataURL){
-    certSigImg.src = signatureImageDataURL;
+  if(finalSignature){
+    certSigImg.src = finalSignature;
     certSigImg.style.display = 'block';
   } else {
     certSigImg.style.display = 'none';
@@ -1228,7 +1360,16 @@ document.getElementById('showDateToggle').addEventListener('change', function(){
   document.getElementById('customDateWrap').style.display = this.checked ? 'block' : 'none';
 });
 
+document.getElementById('sealUpload').addEventListener('change', handleSealUpload);
 document.getElementById('signatureUpload').addEventListener('change', handleSignatureUpload);
+
+document.querySelectorAll('input[name="signatureMode"]').forEach(function(radio){
+  radio.addEventListener('change', function(){
+    signatureMode = this.value;
+    document.getElementById('signatureUploadWrap').style.display = (signatureMode === 'upload') ? 'block' : 'none';
+    document.getElementById('signatureDrawWrap').style.display = (signatureMode === 'draw') ? 'block' : 'none';
+  });
+});
 
 document.getElementById('studentName').addEventListener('keydown', function(e){
   if(e.key === 'Enter'){ generateCert(); }
