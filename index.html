@@ -128,6 +128,18 @@
     border-color:var(--gold);
     box-shadow:0 0 0 3px rgba(184,134,47,0.18);
   }
+  input[type="file"]{
+    width:100%;
+    padding:10px 12px;
+    font-family:'Reem Kufi', sans-serif;
+    font-size:13px;
+    background:#fffdf6;
+    border:1px solid #cbb884;
+    border-radius:4px;
+    color:var(--ink-soft);
+    margin-bottom:14px;
+    cursor:pointer;
+  }
   .gender-row{
     display:flex;
     gap:10px;
@@ -216,6 +228,20 @@
   .cert-outer{
     width:100%;
     max-width:297mm;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    padding:4px 4px 10px;
+  }
+  .mobile-scroll-hint{
+    display:none;
+    text-align:center;
+    font-family:'Reem Kufi', sans-serif;
+    font-size:12px;
+    color:var(--gold-light);
+    margin-bottom:10px;
+  }
+  @media (max-width:850px){
+    .mobile-scroll-hint{display:block;}
   }
   .toolbar{
     display:flex;
@@ -249,6 +275,7 @@
   .page-shell{
     width:297mm;
     max-width:100%;
+    min-width:850px;
     aspect-ratio:297/210;
     margin:0 auto 26px;
     box-shadow:0 25px 70px rgba(0,0,0,0.5);
@@ -514,7 +541,9 @@
     body{background:#fff;}
     .toolbar, .form-screen{display:none !important;}
     .wrap{padding:0;min-height:auto;}
-    .page-shell{box-shadow:none; width:100%; height:190mm; margin-bottom:0;}
+    .page-shell{box-shadow:none; width:100%; min-width:0; height:190mm; margin-bottom:0;}
+    .cert-outer{overflow-x:visible;}
+    .mobile-scroll-hint{display:none !important;}
     @page{size:A4 landscape;margin:10mm;}
   }
 </style>
@@ -550,7 +579,7 @@
     <div class="form-title">إصدار إجازة سماع</div>
     <p class="form-sub">أدخل بياناتك ليتم إصدار <b>إجازة سماع كتاب إتمام المطالب</b> باسمك، منسّقة ومختومة، جاهزة للطباعة والتحميل.</p>
 
-    <label for="studentName">الاسم الكامل</label>
+    <label for="studentName" id="nameLabel">الاسم الكامل</label>
     <input type="text" id="studentName" placeholder="اكتب اسمك هنا" autocomplete="off">
     <div class="error-msg" id="nameError"></div>
 
@@ -596,6 +625,13 @@
         <option value="large">كبير</option>
         <option value="xlarge">كبير جداً</option>
       </select>
+
+      <label for="signatureUpload">توقيع وختم المُجيز (اختياري)</label>
+      <input type="file" id="signatureUpload" accept="image/*">
+      <div id="signaturePreviewWrap" style="display:none; margin:-10px 0 20px;">
+        <img id="signaturePreviewImg" alt="معاينة التوقيع والختم" style="max-height:70px; display:block; margin:0 auto;">
+        <button type="button" onclick="clearSignatureUpload()" style="display:block; margin:8px auto 0; background:none; border:none; color:var(--maroon); font-family:'Reem Kufi', sans-serif; font-size:12px; cursor:pointer; text-decoration:underline;">إزالة الصورة</button>
+      </div>
     </div>
 
     <div class="attest-block" id="attestBlock">
@@ -630,6 +666,8 @@
       <button onclick="printCertificate()">طباعة / حفظ PDF</button>
       <button onclick="resetForm()" id="resetFormBtn">إصدار إجازة أخرى</button>
     </div>
+
+    <div class="mobile-scroll-hint">↔ مرر يميناً ويساراً لعرض الإجازة بجودة كاملة</div>
 
     <div class="page-shell" id="certShell">
       <div class="page-scale" id="certScale">
@@ -699,6 +737,7 @@
             <div class="footer-block">
               <div class="label">الْمُجِيز</div>
               <div class="signature">كُلَيْبُ بْنُ أَحْمَدَ بْنِ ضَيْفِ اللَّهِ الزَّهْرَانِيّ</div>
+              <img id="certSignatureImg" alt="توقيع وختم المجيز" style="display:none; max-height:80px; margin-top:20px;">
             </div>
           </div>
 
@@ -799,6 +838,7 @@ function initModeUI(){
   } else {
     document.getElementById('linkGenPanel').style.display = 'block';
     document.getElementById('attestBlock').style.display = 'none';
+    document.getElementById('nameLabel').textContent = 'الاسم الكامل (اختياري)';
   }
 }
 
@@ -869,6 +909,7 @@ function copyStudentLink(){
 }
 
 initModeUI();
+loadSharedSignature();
 
 function pad(n){return n.toString().padStart(2,'0');}
 
@@ -919,6 +960,48 @@ const FONT_SIZE_MAP = {
   xlarge: {body:20.5, appendix:17.5}
 };
 
+let signatureImageDataURL = null;
+const SIGNATURE_STORAGE_KEY = 'ijaza-signature-image';
+
+async function loadSharedSignature(){
+  try{
+    if(!window.storage) return;
+    const result = await window.storage.get(SIGNATURE_STORAGE_KEY, true);
+    if(result && result.value){
+      signatureImageDataURL = result.value;
+      if(!isStudentMode){
+        document.getElementById('signaturePreviewImg').src = signatureImageDataURL;
+        document.getElementById('signaturePreviewWrap').style.display = 'block';
+      }
+    }
+  }catch(e){ /* no shared signature saved yet, or storage unavailable */ }
+}
+
+function handleSignatureUpload(e){
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt){
+    signatureImageDataURL = evt.target.result;
+    document.getElementById('signaturePreviewImg').src = signatureImageDataURL;
+    document.getElementById('signaturePreviewWrap').style.display = 'block';
+    if(window.storage){
+      window.storage.set(SIGNATURE_STORAGE_KEY, signatureImageDataURL, true).catch(function(){});
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearSignatureUpload(){
+  signatureImageDataURL = null;
+  document.getElementById('signatureUpload').value = '';
+  document.getElementById('signaturePreviewWrap').style.display = 'none';
+  document.getElementById('certSignatureImg').style.display = 'none';
+  if(window.storage){
+    window.storage.delete(SIGNATURE_STORAGE_KEY, true).catch(function(){});
+  }
+}
+
 function applyFontSettings(fontFamily, sizeKey){
   const sizes = FONT_SIZE_MAP[sizeKey] || FONT_SIZE_MAP.medium;
   document.querySelectorAll('.cert-body').forEach(function(el){
@@ -967,13 +1050,16 @@ function generateCert(){
   if(isStudentMode && linkAlreadyUsed) return;
 
   const nameInput = document.getElementById('studentName');
-  const name = nameInput.value.trim();
+  let name = nameInput.value.trim();
   const errEl = document.getElementById('nameError');
 
-  if(!name){
+  if(isStudentMode && !name){
     errEl.textContent = 'الرجاء إدخال الاسم قبل إصدار الإجازة';
     nameInput.focus();
     return;
+  }
+  if(!name){
+    name = '.......................';
   }
   errEl.textContent = '';
 
@@ -1037,6 +1123,14 @@ function generateCert(){
     serialEl.textContent = makeSerial();
   } else {
     serialEl.style.display = 'none';
+  }
+
+  const certSigImg = document.getElementById('certSignatureImg');
+  if(signatureImageDataURL){
+    certSigImg.src = signatureImageDataURL;
+    certSigImg.style.display = 'block';
+  } else {
+    certSigImg.style.display = 'none';
   }
 
   const fontFamily = document.getElementById('fontFamilySelect').value;
@@ -1133,6 +1227,8 @@ window.addEventListener('afterprint', function(){
 document.getElementById('showDateToggle').addEventListener('change', function(){
   document.getElementById('customDateWrap').style.display = this.checked ? 'block' : 'none';
 });
+
+document.getElementById('signatureUpload').addEventListener('change', handleSignatureUpload);
 
 document.getElementById('studentName').addEventListener('keydown', function(e){
   if(e.key === 'Enter'){ generateCert(); }
