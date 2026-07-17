@@ -654,6 +654,7 @@
   <div class="form-card" id="formScreen">
     <div class="form-eyebrow">مركز الإجازات العلمية</div>
     <div class="form-title">إصدار إجازة سماع</div>
+    <p class="form-sub" id="mobileWarningNote" style="display:none; color:#c0392b; font-weight:700;">عَلَى الْجَوَّالِ اسْتَخْدِمْ فَقَطْ "تَحْمِيلُ كُلِّ الصَّفَحَاتِ كَصُوَرٍ".</p>
     <p class="form-sub">أدخل بياناتك ليتم إصدار <b>إجازة سماع الكتاب</b> باسمك، منسّقة ومختومة، جاهزة للطباعة والتحميل. <span id="prefComputerNote" style="display:none;">يفضّل فتح الرابط على جهاز كمبيوتر.</span></p>
 
     <label for="studentName" id="nameLabel">الاسم الكامل</label>
@@ -937,6 +938,7 @@ function initModeUI(){
     document.getElementById('resetFormBtn').style.display = 'none';
     document.getElementById('studentHints').style.display = 'block';
     document.getElementById('prefComputerNote').style.display = 'inline';
+    document.getElementById('mobileWarningNote').style.display = 'block';
     checkLinkLock();
   } else {
     document.getElementById('linkGenPanel').style.display = 'block';
