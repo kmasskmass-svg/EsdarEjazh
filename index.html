@@ -648,6 +648,13 @@
       <button class="submit-btn" onclick="copyStudentLink()" type="button" style="margin-top:8px; background:var(--gold); color:#241a08;">نسخ الرابط</button>
       <div class="error-msg" id="copyMsg" style="color:var(--green); text-align:center;"></div>
     </div>
+
+    <div class="attest-block" style="margin-top:22px;">
+      <label for="disableLinkInput">تعطيل رابط طالب سابق (اختياري)</label>
+      <input type="text" id="disableLinkInput" placeholder="الصق رابط الطالب هنا">
+      <button class="submit-btn" onclick="disableStudentLink()" type="button" style="background:var(--maroon); margin-top:2px;">تعطيل هذا الرابط</button>
+      <div class="error-msg" id="disableMsg" style="text-align:center;"></div>
+    </div>
   </div>
 
   <!-- FORM SCREEN -->
@@ -976,17 +983,19 @@ async function checkLinkLock(){
   }catch(e){ /* localStorage unavailable (e.g. private mode) -> allow through */ }
 }
 
-async function markLinkUsed(){
-  if(!LOCK_KEY) return;
-
+async function writeLockForKey(key){
   if(window.storage){
-    try{ await window.storage.set(LOCK_KEY, 'true', true); }
+    try{ await window.storage.set(key, 'true', true); }
     catch(e){ /* fail silently */ }
     return;
   }
-
-  try{ localStorage.setItem(LOCK_KEY, 'true'); }
+  try{ localStorage.setItem(key, 'true'); }
   catch(e){ /* fail silently */ }
+}
+
+async function markLinkUsed(){
+  if(!LOCK_KEY) return;
+  await writeLockForKey(LOCK_KEY);
 }
 
 function generateStudentLink(){
@@ -1011,6 +1020,38 @@ function copyStudentLink(){
       msg.textContent = 'يرجى نسخ الرابط يدوياً';
     }
   });
+}
+
+async function disableStudentLink(){
+  const input = document.getElementById('disableLinkInput');
+  const msg = document.getElementById('disableMsg');
+  const raw = input.value.trim();
+
+  if(!raw){
+    msg.style.color = 'var(--maroon)';
+    msg.textContent = 'الصق رابط الطالب أولاً';
+    return;
+  }
+
+  let token = raw;
+  try{
+    const url = new URL(raw);
+    const t = url.searchParams.get('token');
+    if(t) token = t;
+  }catch(e){
+    /* not a full URL — treat whatever was pasted as the token itself */
+  }
+
+  if(!token){
+    msg.style.color = 'var(--maroon)';
+    msg.textContent = 'تعذّر التعرّف على رمز الرابط';
+    return;
+  }
+
+  await writeLockForKey('ijaza-link-used-' + token);
+  msg.style.color = 'var(--green)';
+  msg.textContent = 'تم تعطيل هذا الرابط ✓';
+  input.value = '';
 }
 
 initModeUI();
